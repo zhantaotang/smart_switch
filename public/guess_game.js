@@ -1,3 +1,11 @@
+'use strict'  // 使用最严格的语法
+
+var http = require('http');  // 引入http模块。相当于C++中的include头文件
+var url = require('url');
+var util = require('util');
+var fs = require('fs'); // 引入fs模块
+var path=require("path")
+
 let randomNumber = Math.floor(Math.random() * 100) + 1;
 const guesses = document.querySelector('.guesses');
 const lastResult = document.querySelector('.lastResult');
@@ -7,6 +15,47 @@ const guessField = document.querySelector('.guessField');
 let guessCount = 1;
 let resetButton;
 
+function generate_post(state) {
+
+  lastResult.textContent = 'send a post request to server';
+  var contents = "power on";
+
+  var options = {
+//  　　host: 'localhost:8080',
+//  　　path: '/public/power_on',
+　　method: 'POST',
+　　headers: {
+  　　'Content-Type': 'text/plain',
+  　　'Content-Length': contents.length
+　　}
+  };
+
+  var req = http.request(options, function(res){
+    
+    res.setEncoding('uft8');
+
+    util.log('STATUS: ' + res.statusCode);
+    util.log('HEADERS: ' + util.inspect(res.headers));
+    lastResult.textContent = '设备上电成功！';
+
+    res.on('data', function(chunk){
+      util.log('BODY: ' + chunk);
+    });
+
+    res.on('error', function(err){
+      util.log('RESPONSE ERROR: ' + err);
+    });
+
+  });
+
+  req.on('error', function(err){
+    util.log('REQUEST ERROR: ' + err);
+  });
+
+  req.write(contents);
+  req.end(); //不能漏掉，结束请求，否则服务器将不会收到信息。
+
+}
 
 function checkGuess() {
   let userGuess = Number(guessField.value);
@@ -40,7 +89,7 @@ function checkGuess() {
   guessField.focus();
 }
 
-guessSubmit.addEventListener('click', checkGuess);
+guessSubmit.addEventListener('click', generate_post);
 
 function setGameOver() {
   guessField.disabled = true;
