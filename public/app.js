@@ -19,8 +19,23 @@ let resetButton;
 function generate_post(state) {
 
   lastResult.textContent = 'send a post request to server';
-  var contents = {"action": 'power on'};
-  var str = '{\\"action\\":\\"\power_on\"}'; //change the javascriptobject to jsonstring
+
+  if (state  === "on") {
+    var contents = {"action": 'power on'};
+    var str = '{\\"action\\":\\"\power_on\"}'; //change the javascriptobject to jsonstring
+    var op_path = '/public/power_on';
+  } else if (state === "off") {
+    var contents = {"action": 'power off'};
+    var str = '{\\"action\\":\\"\power_off\"}'; //change the javascriptobject to jsonstring
+    var op_path = '/public/power_off';
+  } else if (state === "reset")  {
+    var contents = {"action": 'power reset'};
+    var str = '{\\"action\\":\\"\power_reset\"}'; //change the javascriptobject to jsonstring
+    var op_path = '/public/power_reset';
+  } else {
+    guessField.value = '选项错误';
+    return;
+  }
   //var str = '{\\"name\\":\\"alex\\",\\"age\\":18,\\"address\\":\\"sdsdd\\"}'; //change the javascriptobject to jsonstring
   var options = {
  　　//host: 'localhost:8080',

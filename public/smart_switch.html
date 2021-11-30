@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <title>SMART SWITCH demo</title>
+
+    <style>
+      html {
+        font-family: sans-serif;
+      }
+
+      body {
+        width: 50%;
+        max-width: 800px;
+        min-width: 480px;
+        margin: 0 auto;
+      }
+
+      .lastResult {
+        color: white;
+        padding: 3px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>智能开关 v0.1</h1>
+
+    <p>这是一个可以通过web页面控制远程电源开关的demo程序，当前Demo版本v0.1</p>
+
+    <div class="form">
+
+      <label for="resultField">Result：</label><input type="text" id="resultField" class="resultField">
+      <input type="submit" value="Power On" class="powerOn">
+      <input type="submit" value="Power Off" class="powerOff">
+      <input type="submit" value="Power Reset" class="powerReset">
+    </div>
+
+    <div class="resultParas">
+      <p class="guesses"></p>
+      <p class="lastResult"></p>
+      <p class="lowOrHi"></p>
+    </div>
+
+    <script src="smart_switch.js" defer></script>
+  </body>
+</html>

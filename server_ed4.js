@@ -1,35 +1,66 @@
-// http_server.js 文件
+'use strict' 
 
-'use strict'  // 使用最严格的语法
-
-var http = require('http');  // 引入http模块。相当于C++中的include头文件
+var http = require('http');  
 var url = require('url');
 var util = require('util');
-var fs = require('fs'); // 引入fs模块
+var fs = require('fs'); 
 var path=require("path");
 var querystring = require('querystring');
-
-var express=require('express');// 需要sudo npm install express安装
-var serveIndex = require('serve-index');// 需要sudo npm install serve-index安装
+var express=require('express');
+var serveIndex = require('serve-index');
 
 var app = express();// 实例化
 
 //app.use(serveIndex('./public')) // 预览目录
 app.use(express.static(path.join(__dirname, 'public'))); // 发布静态目录的方法
 
-// http server 创建http服务
+// create http server based on app
 var http_server=http.createServer(app);// 回调的时候，就会调用app，将参数传递给express，由express来处理
 
-http_server.listen(8080, '0.0.0.0'); // 80端口，或者8080都可以。
+http_server.listen(8080, '0.0.0.0'); // port: 8080
+
+// main function to execute power state change
+function do_power_opt(opt) {
+
+    var exec = require('child_process').exec;
+    var py_file = './js_py_test.py';
+   
+    console.log("call python script to execute GPIO settings");
+    var ret = exec('python '+py_file+' '+opt, function(err, stdout, stdin){
+
+        if(err){
+            console.log('err: ' + err);
+            console.log('run power ', opt, ' fail');
+            return 1;
+        }
+
+        if(stdout)
+        {
+            //parse the string
+            console.log(stdout);
+            var astr = stdout.split('\r\n').join('');//delete the \r\n
+            var obj = JSON.parse(astr);
+
+            console.log('run power ', opt, ' success: ');
+            console.log('option',obj.option);
+            console.log('status',obj.status);
+        }
+
+        return 0;
+    });
+
+    console.log("The result of python script is: " + ret);
+    return 0;
+}
 
 app.get('/', function(req, res) {
     console.log("get a client request")
-    //return the default
-    res.sendFile(__dirname + "/public/app.html")
+    res.sendFile(__dirname + "/public/smart_switch.html")
 })
 
+
 app.post('/public/power_on', function(req, res) {
-    console.log("get a client POST request")
+    console.log("get a Power on request")
     var body = "";
 
     req.on('data', function (chunk) {
@@ -39,19 +70,70 @@ app.post('/public/power_on', function(req, res) {
     req.on('end', function () {
             // 解析参数
         body = querystring.parse(body);
+
+        var opt = 'on';
+        var err = do_power_opt(opt);
         // 设置响应头部信息及编码
         res.writeHead(200, {'Content-Type': 'text/plain; charset=utf8'});
     
-        if(body.name && body.url) { // 输出提交的数据
-            res.write("网站名：" + body.name);
-            res.write("<br>");
-            res.write("网站 URL：" + body.url);
-        } else {  // 输出表单
-            res.write("Post respond");
+        if(err) { 
+            res.write("Execute power option: " + opt + ", fail!");
+        } else {  // 输出结果
+            res.write("Execute power option: " + opt + ", successfully!");
         }
         res.end();
     });
 
-    //return the default
-    //res.sendFile(__dirname + "/public/guess_game.html")
+});
+
+app.post('/public/power_off', function(req, res) {
+    console.log("get a Power off request")
+    var body = "";
+
+    req.on('data', function (chunk) {
+        body += chunk;
+    });
+
+    req.on('end', function () {
+            // 解析参数
+        body = querystring.parse(body);
+        var opt = 'off';
+        var err = do_power_opt(opt);
+        // 设置响应头部信息及编码
+        res.writeHead(200, {'Content-Type': 'text/plain; charset=utf8'});
+    
+        if(err) { 
+            res.write("Execute power option: " + opt + ", fail!");
+        } else {  // 输出结果
+            res.write("Execute power option: " + opt + ", successfully!");
+        }
+        res.end();
+    });
+
+});
+
+app.post('/public/power_reset', function(req, res) {
+    console.log("get a Power reset request")
+    var body = "";
+
+    req.on('data', function (chunk) {
+        body += chunk;
+    });
+
+    req.on('end', function () {
+            // 解析参数
+        body = querystring.parse(body);
+        var opt = 'reset';
+        var err = do_power_opt(opt);
+        // 设置响应头部信息及编码
+        res.writeHead(200, {'Content-Type': 'text/plain; charset=utf8'});
+    
+        if(err) { 
+            res.write("Execute power option: " + opt + ", fail!");
+        } else {  // 输出结果
+            res.write("Execute power option: " + opt + ", successfully!");
+        }
+        res.end();
+    });
+
 });
