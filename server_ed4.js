@@ -17,7 +17,7 @@ app.use(express.static(path.join(__dirname, 'public'))); // 发布静态目录�
 // create http server based on app
 var http_server=http.createServer(app);// 回调的时候，就会调用app，将参数传递给express，由express来处理
 
-http_server.listen(8080, '0.0.0.0'); // port: 8080
+http_server.listen(8080, '192.168.3.12'); // port: 8080
 
 // main function to execute power state change
 function do_power_opt(opt) {
@@ -128,7 +128,7 @@ app.post('/public/power_reset', function(req, res) {
         // 设置响应头部信息及编码
         res.writeHead(200, {'Content-Type': 'text/plain; charset=utf8'});
     
-        if(err) { 
+        if(err) {
             res.write("Execute power option: " + opt + ", fail!");
         } else {  // 输出结果
             res.write("Execute power option: " + opt + ", successfully!");
