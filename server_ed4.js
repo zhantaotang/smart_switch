@@ -113,12 +113,12 @@ app.post('/public/power_off', function(req, res) {
             // 解析参数
         body = querystring.parse(body);
 	
-	var chnl = 1;
+        var chnl = 1;
         var opt = 'off';
         var err = do_power_opt(chnl, opt);
         // 设置响应头部信息及编码
         res.writeHead(200, {'Content-Type': 'text/plain; charset=utf8'});
-    
+
         if(err) { 
             res.write("Execute power option: " + opt + ", fail!");
         } else {  // 输出结果
