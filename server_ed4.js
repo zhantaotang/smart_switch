@@ -8,6 +8,13 @@ var path=require("path");
 var querystring = require('querystring');
 var express=require('express');
 var serveIndex = require('serve-index');
+var os = require( 'os' );
+
+// get all local network interfaces
+var ifs = os.networkInterfaces();
+var host_ip = ifs['eth0'][0]['address'];
+var host_port = 8080;
+console.log("host ip is: " + host_ip);
 
 var app = express();// 实例化
 
@@ -17,7 +24,7 @@ app.use(express.static(path.join(__dirname, 'public'))); // 发布静态目录�
 // create http server based on app
 var http_server=http.createServer(app);// 回调的时候，就会调用app，将参数传递给express，由express来处理
 
-http_server.listen(8080, '192.168.3.12'); // port: 8080
+http_server.listen(host_port, host_ip); // port: 8080
 
 // main function to execute power state change
 function do_power_opt(opt) {
