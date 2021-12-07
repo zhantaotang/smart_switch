@@ -12,10 +12,19 @@ let randomNumber = Math.floor(Math.random() * 100) + 1;
 const guesses = document.querySelector('.guesses');
 const lastResult = document.querySelector('.lastResult');
 const lowOrHi = document.querySelector('.lowOrHi');
-const powerOn = document.querySelector('.powerOn');
-const powerOff = document.querySelector('.powerOff');
-const powerReset = document.querySelector('.powerReset');
-const resultField = document.querySelector('.resultField');
+
+//RDB2
+const powerOn_rdb2 = document.querySelector('.powerOn_rdb2');
+const powerOff_rdb2 = document.querySelector('.powerOff_rdb2');
+const powerReset_rdb2 = document.querySelector('.powerReset_rdb2');
+const resultField_rdb2 = document.querySelector('.resultField_rdb2');
+
+//EVB
+const powerOn_evb = document.querySelector('.powerOn_evb');
+const powerOff_evb = document.querySelector('.powerOff_evb');
+const powerReset_evb = document.querySelector('.powerReset_evb');
+const resultField_evb = document.querySelector('.resultField_evb');
+
 let guessCount = 1;
 let resetButton;
 
@@ -81,66 +90,13 @@ function generate_post() {
 
 }
 
-function checkGuess() {
-  let userGuess = Number(resultField.value);
-  if (guessCount === 1) {
-    guesses.textContent = '上次猜的数：';
-  }
+powerOn_rdb2.addEventListener('click', generate_post);
+powerOff_rdb2.addEventListener('click', generate_post);
+powerReset_rdb2.addEventListener('click', generate_post);
+powerOn_evb.addEventListener('click', generate_post);
+powerOff_evb.addEventListener('click', generate_post);
+powerReset_evb.addEventListener('click', generate_post);
 
-  guesses.textContent += userGuess + ' ';
-
-  if (userGuess === randomNumber) {
-    lastResult.textContent = '恭喜你！猜对了！';
-    lastResult.style.backgroundColor = 'green';
-    lowOrHi.textContent = '';
-    setGameOver();
-  } else if (guessCount === 10) {
-    lastResult.textContent = '!!!游戏结束!!!';
-    lowOrHi.textContent = '';
-    setGameOver();
-  } else {
-    lastResult.textContent = '你猜错了！';
-    lastResult.style.backgroundColor = 'red';
-    if(userGuess < randomNumber) {
-      lowOrHi.textContent = '你刚才猜低了！' ;
-    } else if(userGuess > randomNumber) {
-      lowOrHi.textContent = '你刚才猜高了！';
-    }
-  }
-
-  guessCount++;
-  resultField.value = '';
-  resultField.focus();
-}
-
-powerOn.addEventListener('click', generate_post);
-powerOff.addEventListener('click', generate_post);
-powerReset.addEventListener('click', generate_post);
-
-function setGameOver() {
-    guessField.disabled = true;
-    guessSubmit.disabled = true;
-    resetButton = document.createElement('button');
-    resetButton.textContent = '开始新游戏';
-    document.body.appendChild(resetButton);
-    resetButton.addEventListener('click', resetGame);
-  }
-  
-  function resetGame() {
-    guessCount = 1;
-    const resetParas = document.querySelectorAll('.resultParas p');
-    for(let i = 0 ; i < resetParas.length ; i++) {
-      resetParas[i].textContent = '';
-    }
-  
-    resetButton.parentNode.removeChild(resetButton);
-    guessField.disabled = false;
-    guessSubmit.disabled = false;
-    guessField.value = '';
-    guessField.focus();
-    lastResult.style.backgroundColor = 'white';
-    randomNumber = Math.floor(Math.random() * 100) + 1;
-  }
   },{"fs":2,"http":32,"path":25,"url":52,"util":57}],2:[function(require,module,exports){
   
   },{}],3:[function(require,module,exports){
