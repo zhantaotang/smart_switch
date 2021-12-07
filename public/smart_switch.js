@@ -38,12 +38,19 @@ function generate_post() {
   var action = target.action;
   var op_path = "";
   
+  var element_chnl;
+  var element_result;
+
   if (board == "evb") {
-    chnl = channel_evb.value;
+    element_chnl = channel_evb;
+    element_result = resultField_evb;
   } else {
-    chnl = channel_rdb2.value;
+    element_chnl = channel_rdb2;
+    element_result = resultField_rdb2;
   }
   
+  chnl = element_chnl.value;
+
   util.log('Board: ' + board);
   util.log('  channel:    ' + chnl);
   util.log('  action:       ' + action);
@@ -55,7 +62,7 @@ function generate_post() {
   } else if (action == "reset") {
     op_path = '/public/power_reset';
   } else {
-    resultField.value = 'Invalid path';
+    element_result.value = 'Invalid path';
     return;
   }
  
@@ -72,19 +79,14 @@ function generate_post() {
   };
 
   var req = http.request(options, function(res){
-    
+
     res.setEncoding('utf8');
 
     util.log('STATUS: ' + res.statusCode);
     util.log('HEADERS: ' + util.inspect(res.headers));
 
-    if (board === "EVB") {
-        resultField_evb.value = target.value + " OK";
-        resultField_evb.focus();
-    } else {
-        resultField_rdb2.value = target.value + " OK";
-        resultField_rdb2.focus();
-    }
+    element_result.value = target.value + " OK";
+    element_result.focus();
 
     res.on('data', function(chunk){
       util.log('BODY: ' + chunk);
