@@ -20,21 +20,32 @@ def gpio_out_set(pin, mode):
 
 def main():
 
-    opt = sys.argv[1]
+    chnl = sys.argv[1]
+    opt = sys.argv[2]
     #print("opt is " + opt)
 
     status = 'success'
 
-    chnl_1_pin = 17
+    chnl_pin = 0
 
-    gpio_init(chnl_1_pin)
-    gpio_out_set(chnl_1_pin, opt)
+    if chnl == "1":
+        chnl_pin = 17
+    else:
+        status = 'fail with invalid chnl'
+        ret_json = {"chnl":chnl, "option":opt, "status":status}
+        ret_str = json.dumps(ret_json,sort_keys=True)
+        print(ret_str)
+    
+        return
+
+    gpio_init(chnl_pin)
+    gpio_out_set(chnl_pin, opt)
     
     if execute_opt(opt) != 0:
         status = 'fail'
 
     #obj = json.loads(params) #str to obj
-    ret_json = {"option":opt, "status":status}
+    ret_json = {"chnl":chnl, "option":opt, "status":status}
     ret_str = json.dumps(ret_json,sort_keys=True)
 
     #return strjson to js

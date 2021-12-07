@@ -27,17 +27,22 @@ var http_server=http.createServer(app);// 回调的时候，就会调用app，�
 http_server.listen(host_port, host_ip); // port: 8080
 
 // main function to execute power state change
-function do_power_opt(opt) {
+function do_power_opt(chnl, opt) {
 
     var exec = require('child_process').exec;
     var py_file = './js_py_test.py';
    
-    console.log("call python script to execute GPIO settings");
-    var ret = exec('python '+py_file+' '+opt, function(err, stdout, stdin){
+    console.log("call python script to execute GPIO settings: ");
+    console.log("channel: "+chnl+", operation: "+opt);
+    var ret = exec('python '+py_file+' '+chnl+' '+opt, function(err, stdout, stdin){
 
         if(err){
             console.log('err: ' + err);
-            console.log('run power ', opt, ' fail');
+            console.log('Set power mode: ', opt, ' for channel: ' + chnl +' status:');
+            console.log('channel', obj.chnl);
+            console.log('option', obj.option);
+            console.log('status', obj.status);
+
             return 1;
         }
 
@@ -48,9 +53,10 @@ function do_power_opt(opt) {
             var astr = stdout.split('\r\n').join('');//delete the \r\n
             var obj = JSON.parse(astr);
 
-            console.log('run power ', opt, ' success: ');
-            console.log('option',obj.option);
-            console.log('status',obj.status);
+            console.log('Set power mode: ', opt, ' for channel: ' + chnl +' status:');
+            console.log('channel', obj.chnl);
+            console.log('option', obj.option);
+            console.log('status', obj.status);
         }
 
         return 0;
@@ -78,14 +84,16 @@ app.post('/public/power_on', function(req, res) {
             // 解析参数
         body = querystring.parse(body);
 
+	//console.log('request body: ' + body)
+	var chnl = 1;
         var opt = 'on';
-        var err = do_power_opt(opt);
+        var err = do_power_opt(chnl, opt);
         // 设置响应头部信息及编码
         res.writeHead(200, {'Content-Type': 'text/plain; charset=utf8'});
     
         if(err) { 
             res.write("Execute power option: " + opt + ", fail!");
-        } else {  // 输出结果
+        } else { 
             res.write("Execute power option: " + opt + ", successfully!");
         }
         res.end();
@@ -104,8 +112,10 @@ app.post('/public/power_off', function(req, res) {
     req.on('end', function () {
             // 解析参数
         body = querystring.parse(body);
+	
+	var chnl = 1;
         var opt = 'off';
-        var err = do_power_opt(opt);
+        var err = do_power_opt(chnl, opt);
         // 设置响应头部信息及编码
         res.writeHead(200, {'Content-Type': 'text/plain; charset=utf8'});
     
@@ -130,8 +140,10 @@ app.post('/public/power_reset', function(req, res) {
     req.on('end', function () {
             // 解析参数
         body = querystring.parse(body);
+	
+	var chnl = 1;
         var opt = 'reset';
-        var err = do_power_opt(opt);
+        var err = do_power_opt(chnl, opt);
         // 设置响应头部信息及编码
         res.writeHead(200, {'Content-Type': 'text/plain; charset=utf8'});
     
