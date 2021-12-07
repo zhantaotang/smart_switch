@@ -31,18 +31,20 @@
 
     <div class="form">
       <label for="boardType"> S32G274A-RDB2：
-      <input type="submit" id="rdb2_on" value="Power On" class="powerOn_rdb2">
-      <input type="submit" id="rdb2_off"  value="Power Off" class="powerOff_rdb2">
-      <input type="submit" id="rdb2_reset"  value="Power Reset" class="powerReset_rdb2">
-      <label for="RDB2">Result：</label><input type="text" id="RDB2" class="resultField_rdb2">
+      <input type="submit" id="rdb2" value="Power On" action="on" class="powerOn_rdb2">
+      <input type="submit" id="rdb2"  value="Power Off" action="off" class="powerOff_rdb2">
+      <input type="submit" id="rdb2"  value="Power Reset" action="reset" class="powerReset_rdb2">
+      <label for="rdb2_chnl">Channel：</label><input type="text" id="rdb2" value="2" class="channel_rdb2">
+      <label for="rdb2_result">Result：</label><input type="text" id="rdb2" class="resultField_rdb2">
     </div>
 
     <div class="form">
       <label for="boardType"> S32G274A-EVB：
-      <input type="submit" id="evb_on"  value="Power On" class="powerOn_evb">
-      <input type="submit"  id="evb_off" value="Power Off" class="powerOff_evb">
-      <input type="submit" id="evb_reset"  value="Power Reset" class="powerReset_evb">
-      <label for="EVB">Result：</label><input type="text" id="EVB" class="resultField_evb">
+      <input type="submit" id="evb"  value="Power On" action="on" class="powerOn_evb">
+      <input type="submit"  id="evb" value="Power Off" action="off" class="powerOff_evb">
+      <input type="submit" id="evb"  value="Power Reset" action="reset" class="powerReset_evb">
+      <label for="evb_chnl">Channel：</label><input type="text" id="evb" value="1" class="channel_evb">
+      <label for="evb_result">Result：</label><input type="text" id="evb" class="resultField_evb">
     </div>
 
     <div class="resultParas">

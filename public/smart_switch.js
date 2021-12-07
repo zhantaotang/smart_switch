@@ -18,12 +18,14 @@ const powerOn_rdb2 = document.querySelector('.powerOn_rdb2');
 const powerOff_rdb2 = document.querySelector('.powerOff_rdb2');
 const powerReset_rdb2 = document.querySelector('.powerReset_rdb2');
 const resultField_rdb2 = document.querySelector('.resultField_rdb2');
+const channel_rdb2 = document.querySelector('.channel_rdb2');
 
 //EVB
 const powerOn_evb = document.querySelector('.powerOn_evb');
 const powerOff_evb = document.querySelector('.powerOff_evb');
 const powerReset_evb = document.querySelector('.powerReset_evb');
 const resultField_evb = document.querySelector('.resultField_evb');
+const channel_evb = document.querySelector('.channel_evb');
 
 let guessCount = 1;
 let resetButton;
@@ -31,48 +33,33 @@ let resetButton;
 function generate_post() {
 
   var target = (event.target);
+  var board = target.id;
   var chnl = 0;
-  var action = "";
-
-  lastResult.textContent = 'send a power on post request to server';
+  var action = target.action;
+  var op_path = "";
   
-  util.log('Target ID: ' + target.id);
-  if (target.value === "Power On") {
-    if (target.id === "evb_on") {
-	var board = "EVB";
-	var contents = '{"channel": "1", "action": "on"}';
-    } else {
-	var board = "RDB2";
-        var contents = '{"channel": "2", "action": "on"}';
-    }
-    var op_path = '/public/power_on';
-
-  } else if (target.value === "Power Off") {
-    if (target.id === "evb_off") {
-	var board = "EVB";
-	var contents = '{"channel": "1", "action": "off"}';
-    } else {
-	var board = "RDB2";
-	var contents = '{"channel": "2", "action": "off"}';
-    }
-    var op_path = '/public/power_off';
-
-  } else if (target.value === "Power Reset")  {
-    if (target.id === "evb_reset") {
-	var board = "EVB";
-	var contents = '{"channel": "1", "action": "reset"}';
-    } else {
-	var board = "RDB2";
-	var contents = '{"channel": "2", "action": "reset"}';
-    }
-    var op_path = '/public/power_reset';
-
+  if (board == "evb") {
+    chnl = channel_evb.value;
   } else {
-    resultField.value = '选项错误';
+    chnl = channel_rdb2.value;
+  }
+  
+  util.log('Board: ' + board);
+  util.log('  channel:    ' + chnl);
+  util.log('  action:       ' + action);
+
+  if (action == "on") {
+    op_path = '/public/power_on';
+  } else if (action == "off") {
+    op_path = '/public/power_off';
+  } else if (action == "reset") {
+    op_path = '/public/power_reset';
+  } else {
+    resultField.value = 'Invalid path';
     return;
   }
  
-  util.log('Board type: ' + board);
+  var contents = '{"channel": ${chnl}, "action": ${action}}';
   var options = {
  　　//host: 'localhost:8080',
 　 　path: op_path,
