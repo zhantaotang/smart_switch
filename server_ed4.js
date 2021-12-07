@@ -151,9 +151,11 @@ app.post('/public/power_reset', function(req, res) {
         console.log("    channel:   " + data.channel);
         console.log("    operation: " + data.action);
         var chnl = data.channel;
+        var opt = data.action;
 	
         var err = do_power_opt(chnl, "off");
-        
+	res.writeHead(200, {'Content-Type': 'text/plain; charset=utf8'});
+
         if(err) {
             res.write("Execute power option: off, fail!");
         } else {  // 输出结果
@@ -164,7 +166,6 @@ app.post('/public/power_reset', function(req, res) {
             res.write("Execute power option: " + opt + ", successfully!");
         }
 	
-	res.writeHead(200, {'Content-Type': 'text/plain; charset=utf8'});
         res.end();
     });
 
