@@ -54,10 +54,10 @@ function do_power_opt(chnl, opt) {
             var astr = stdout.split('\r\n').join('');//delete the \r\n
             var obj = JSON.parse(astr);
 
-            console.log('Set power mode: ', opt, ' for channel: ' + chnl +' status:');
-            console.log('channel', obj.chnl);
-            console.log('option', obj.option);
-            console.log('status', obj.status);
+            console.log('Execute status: ');
+            console.log('    channel', obj.chnl);
+            console.log('    option', obj.option);
+            console.log('    status', obj.status);
         }
 
         return 0;
@@ -153,16 +153,12 @@ app.post('/public/power_reset', function(req, res) {
         var chnl = data.channel;
         var opt = data.action;
 	
-        var err = do_power_opt(chnl, "off");
+        var err = do_power_opt(chnl, opt);
 	res.writeHead(200, {'Content-Type': 'text/plain; charset=utf8'});
 
         if(err) {
-            res.write("Execute power option: off, fail!");
+            res.write("Execute power option: " + opt + ", fail!");
         } else {  // 输出结果
-            err = do_power_opt(chnl, "on");
-	    if (err) {
-		res.write("Execute power option: on, failed!");
-	    }
             res.write("Execute power option: " + opt + ", successfully!");
         }
 	

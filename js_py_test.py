@@ -1,6 +1,8 @@
 import json # import the module of json
 import sys # this module is used to get the params from cmd
+import time
 import RPi.GPIO as gpio
+
 
 def execute_opt(opt):
     return 0
@@ -12,10 +14,26 @@ def gpio_init(pin):
 
 def gpio_out_set(pin, mode):
 
-    if mode == "on":
-        gpio.output(pin, gpio.LOW)
-    else:
-        gpio.output(pin, gpio.HIGH)
+    gpio.output(pin, mode)
+
+
+def power_action(pin, opt):
+
+    if opt == "on":
+        gpio_out_set(pin, gpio.LOW)
+    
+    elif opt == "off":
+        gpio_out_set(pin, gpio.HIGH)
+
+    else: # reset
+        # first power off
+        gpio_out_set(pin, gpio.HIGH)
+
+        #sleep for 5 seconds for power off
+        time.sleep(3)
+
+        # then power on
+        gpio_out_set(pin, gpio.LOW)
 
 
 def main():
@@ -41,7 +59,7 @@ def main():
         return
 
     gpio_init(chnl_pin)
-    gpio_out_set(chnl_pin, opt)
+    power_action(chnl_pin, opt)
     
     if execute_opt(opt) != 0:
         status = 'fail'
