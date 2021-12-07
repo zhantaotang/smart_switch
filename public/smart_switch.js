@@ -35,7 +35,7 @@ function generate_post() {
   var target = (event.target);
   var board = target.id;
   var chnl = 0;
-  var action = target.action;
+  var action = target.attributes.action;
   var op_path = "";
   
   var element_chnl;
@@ -53,27 +53,28 @@ function generate_post() {
 
   util.log('Board: ' + board);
   util.log('  channel:    ' + chnl);
-  util.log('  action:       ' + action);
+  util.log('  action:     ' + action.value);
 
-  if (action == "on") {
+  if (action.value == "on") {
     op_path = '/public/power_on';
-  } else if (action == "off") {
+  } else if (action.value == "off") {
     op_path = '/public/power_off';
-  } else if (action == "reset") {
+  } else if (action.value == "reset") {
     op_path = '/public/power_reset';
   } else {
     element_result.value = 'Invalid path';
     return;
   }
  
-  var contents = '{"channel": ${chnl}, "action": ${action}}';
+  var contents = {"channel": chnl, "action": action.value};
+  var contents_str = JSON.stringify(contents);
   var options = {
  　　//host: 'localhost:8080',
 　 　path: op_path,
 　　method: 'POST',
 　　headers: {
   　　'Content-Type': 'application/json',
-  　　'Content-Length': contents.length
+  　　'Content-Length': contents_str.length
 　　},
         accept:  'application/json'
   };
@@ -102,8 +103,8 @@ function generate_post() {
     util.log('REQUEST ERROR: ' + err);
   });
 
-  util.log("sending post request, data: " + contents);
-  req.write(contents);
+  util.log("sending post request, data: " + contents_str);
+  req.write(contents_str);
   req.end(); //不能漏掉，结束请求，否则服务器将不会收到信息。
 
 }
