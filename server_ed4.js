@@ -20,6 +20,7 @@ var app = express();// 实例化
 
 //app.use(serveIndex('./public')) // 预览目录
 app.use(express.static(path.join(__dirname, 'public'))); // 发布静态目录的方法
+//app.use(express.json())
 
 // create http server based on app
 var http_server=http.createServer(app);// 回调的时候，就会调用app，将参数传递给express，由express来处理
@@ -75,18 +76,22 @@ app.get('/', function(req, res) {
 app.post('/public/power_on', function(req, res) {
     console.log("get a Power on request")
     var body = "";
+    var board = "";
 
     req.on('data', function (chunk) {
+	console.log("getting body data ... ")
         body += chunk;
     });
 
     req.on('end', function () {
-            // 解析参数
-        body = querystring.parse(body);
-
-	//console.log('request body: ' + body)
-	var chnl = 1;
-        var opt = 'on';
+         
+        //body = querystring.parse(body);
+	var data = JSON.parse(body);
+	console.log("Request body: ");
+	console.log("    channel:   " + data.channel);
+	console.log("    operation: " + data.action);
+	var chnl = data.channel;
+        var opt = data.action;
         var err = do_power_opt(chnl, opt);
         // 设置响应头部信息及编码
         res.writeHead(200, {'Content-Type': 'text/plain; charset=utf8'});
@@ -110,11 +115,13 @@ app.post('/public/power_off', function(req, res) {
     });
 
     req.on('end', function () {
-            // 解析参数
-        body = querystring.parse(body);
 	
-        var chnl = 1;
-        var opt = 'off';
+	var data = JSON.parse(body);
+        console.log("Request body: ");
+        console.log("    channel:   " + data.channel);
+        console.log("    operation: " + data.action);
+        var chnl = data.channel;
+        var opt = data.action;	
         var err = do_power_opt(chnl, opt);
         // 设置响应头部信息及编码
         res.writeHead(200, {'Content-Type': 'text/plain; charset=utf8'});
@@ -138,20 +145,26 @@ app.post('/public/power_reset', function(req, res) {
     });
 
     req.on('end', function () {
-            // 解析参数
-        body = querystring.parse(body);
 	
-	var chnl = 1;
-        var opt = 'reset';
-        var err = do_power_opt(chnl, opt);
-        // 设置响应头部信息及编码
-        res.writeHead(200, {'Content-Type': 'text/plain; charset=utf8'});
-    
+	var data = JSON.parse(body);
+        console.log("Request body: ");
+        console.log("    channel:   " + data.channel);
+        console.log("    operation: " + data.action);
+        var chnl = data.channel;
+	
+        var err = do_power_opt(chnl, "off");
+        
         if(err) {
-            res.write("Execute power option: " + opt + ", fail!");
+            res.write("Execute power option: off, fail!");
         } else {  // 输出结果
+            err = do_power_opt(chnl, "on");
+	    if (err) {
+		res.write("Execute power option: on, failed!");
+	    }
             res.write("Execute power option: " + opt + ", successfully!");
         }
+	
+	res.writeHead(200, {'Content-Type': 'text/plain; charset=utf8'});
         res.end();
     });
 

@@ -30,33 +30,56 @@ let resetButton;
 
 function generate_post() {
 
-    var target = (event.target);
-  lastResult.textContent = 'send a power on post request to server';
+  var target = (event.target);
+  var chnl = 0;
+  var action = "";
 
+  lastResult.textContent = 'send a power on post request to server';
+  
+  util.log('Target ID: ' + target.id);
   if (target.value === "Power On") {
-    var contents = {"action": 'power on'};
-    var str = '{\\"action\\":\\"\power_on\"}'; //change the javascriptobject to jsonstring
+    if (target.id === "evb_on") {
+	var board = "EVB";
+	var contents = '{"channel": "1", "action": "on"}';
+    } else {
+	var board = "RDB2";
+        var contents = '{"channel": "2", "action": "on"}';
+    }
     var op_path = '/public/power_on';
+
   } else if (target.value === "Power Off") {
-    var contents = {"action": 'power off'};
-    var str = '{\\"action\\":\\"\power_off\"}'; //change the javascriptobject to jsonstring
+    if (target.id === "evb_off") {
+	var board = "EVB";
+	var contents = '{"channel": "1", "action": "off"}';
+    } else {
+	var board = "RDB2";
+	var contents = '{"channel": "2", "action": "off"}';
+    }
     var op_path = '/public/power_off';
+
   } else if (target.value === "Power Reset")  {
-    var contents = {"action": 'power reset'};
-    var str = '{\\"action\\":\\"\power_reset\"}'; //change the javascriptobject to jsonstring
+    if (target.id === "evb_reset") {
+	var board = "EVB";
+	var contents = '{"channel": "1", "action": "reset"}';
+    } else {
+	var board = "RDB2";
+	var contents = '{"channel": "2", "action": "reset"}';
+    }
     var op_path = '/public/power_reset';
+
   } else {
     resultField.value = '选项错误';
     return;
   }
-  //var str = '{\\"name\\":\\"alex\\",\\"age\\":18,\\"address\\":\\"sdsdd\\"}'; //change the javascriptobject to jsonstring
+ 
+  util.log('Board type: ' + board);
   var options = {
  　　//host: 'localhost:8080',
 　 　path: op_path,
 　　method: 'POST',
 　　headers: {
   　　'Content-Type': 'application/json',
-  　　'Content-Length': str.length
+  　　'Content-Length': contents.length
 　　},
         accept:  'application/json'
   };
@@ -67,9 +90,14 @@ function generate_post() {
 
     util.log('STATUS: ' + res.statusCode);
     util.log('HEADERS: ' + util.inspect(res.headers));
-    lastResult.textContent = '设备上电成功！';
-    resultField.value = target.value + " OK";
-    resultField.focus();
+
+    if (board === "EVB") {
+        resultField_evb.value = target.value + " OK";
+        resultField_evb.focus();
+    } else {
+        resultField_rdb2.value = target.value + " OK";
+        resultField_rdb2.focus();
+    }
 
     res.on('data', function(chunk){
       util.log('BODY: ' + chunk);
@@ -85,7 +113,8 @@ function generate_post() {
     util.log('REQUEST ERROR: ' + err);
   });
 
-  req.write(str);
+  util.log("sending post request, data: " + contents);
+  req.write(contents);
   req.end(); //不能漏掉，结束请求，否则服务器将不会收到信息。
 
 }

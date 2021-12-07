@@ -30,6 +30,8 @@ def main():
 
     if chnl == "1":
         chnl_pin = 17
+    elif chnl == "2":
+        chnl_pin = 23
     else:
         status = 'fail with invalid chnl'
         ret_json = {"chnl":chnl, "option":opt, "status":status}
