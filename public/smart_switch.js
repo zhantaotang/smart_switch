@@ -66,7 +66,7 @@ function generate_post() {
     return;
   }
  
-  var contents = {"channel": chnl, "action": action.value};
+  var contents = {"board":board, "channel": chnl, "action": action.value};
   var contents_str = JSON.stringify(contents);
   var options = {
  　　//host: 'localhost:8080',

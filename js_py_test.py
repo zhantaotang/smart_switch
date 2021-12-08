@@ -3,72 +3,76 @@ import sys # this module is used to get the params from cmd
 import time
 import RPi.GPIO as gpio
 
-
-def execute_opt(opt):
-    return 0
-
-def gpio_init(pin):
-
+def gpio_setmode_BCM():
     gpio.setmode(gpio.BCM)
+
+def gpio_setpin_out(pin):
     gpio.setup(pin, gpio.OUT)
-
-def gpio_out_set(pin, mode):
-
-    gpio.output(pin, mode)
-
 
 def power_action(pin, opt):
 
     if opt == "on":
-        gpio_out_set(pin, gpio.LOW)
+        gpio.output(pin, gpio.LOW)
     
     elif opt == "off":
-        gpio_out_set(pin, gpio.HIGH)
+        gpio.output(pin, gpio.HIGH)
 
     else: # reset
         # first power off
-        gpio_out_set(pin, gpio.HIGH)
+        gpio.output(pin, gpio.HIGH)
 
-        #sleep for 5 seconds for power off
+        #sleep 3 seconds for power off
         time.sleep(3)
 
         # then power on
-        gpio_out_set(pin, gpio.LOW)
+        gpio.output(pin, gpio.LOW)
 
+
+def gen_result(board, chnl, opt, status):
+    result_json = {"board":board, "chnl":chnl, "option":opt, "status":status}
+    result_str = json.dumps(result_json,sort_keys=True)
+
+    return result_str
 
 def main():
 
-    chnl = sys.argv[1]
-    opt = sys.argv[2]
+    board = sys.argv[1]
+    chnl = sys.argv[2]
+    opt = sys.argv[3]
     #print("opt is " + opt)
 
     status = 'success'
 
+    evb_chnl_pin = 17
+    rdb2_chnl_pin = 27
+    reserved_chnl3_pin = 22
+    reserved_chnl4_pin = 23
+
     chnl_pin = 0
 
-    if chnl == "1":
-        chnl_pin = 17
-    elif chnl == "2":
-        chnl_pin = 23
-    else:
-        status = 'fail with invalid chnl'
-        ret_json = {"chnl":chnl, "option":opt, "status":status}
-        ret_str = json.dumps(ret_json,sort_keys=True)
-        print(ret_str)
-    
+    if int(chnl) > 4 or int(chnl) < 1:
+        status = "Invalid chnl index!"
+        result = gen_result(board, chnl, opt, status)
+        print(result)
         return
 
-    gpio_init(chnl_pin)
+    if board == "evb":
+        chnl_pin = evb_chnl_pin
+    elif board == "rdb2":
+        chnl_pin = rdb2_chnl_pin
+    else:
+        status = "Invalid board type!"
+        result = gen_result(board, chnl, opt, status)
+        print(result)
+        return
+
+    gpio_setmode_BCM()
+    gpio_setpin_out(chnl_pin)
+
     power_action(chnl_pin, opt)
     
-    if execute_opt(opt) != 0:
-        status = 'fail'
-
     #obj = json.loads(params) #str to obj
-    ret_json = {"chnl":chnl, "option":opt, "status":status}
-    ret_str = json.dumps(ret_json,sort_keys=True)
-
-    #return strjson to js
-    print(ret_str)
+    result = gen_result(board, chnl, opt, status)
+    print(result)
 
 main()
